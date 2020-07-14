@@ -1,0 +1,5 @@
+interval: 30s
+notify:
+  pagerduty:
+    # REF: https://support.pagerduty.com/docs/generating-api-keys
+    key: <pagerduty_integrate_key>
