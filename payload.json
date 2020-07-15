@@ -1,29 +1,91 @@
 {
-  "receiver": "webhook",
-  "status": "firing",
-  "alerts": [
+  "receiver":"dead-mans-switch",
+  "status":"firing",
+  "alerts":[
     {
-      "status": "firing",
-      "labels": {
-        "alertname": "WatchDog",
-        "dc": "eu-west-1"
+      "status":"firing",
+      "labels":{
+        "alertname":"Watchdog",
+        "cluster":"base",
+        "prometheus":"monitoring/k8s",
+        "provider":"eks",
+        "region":"us-west-2",
+        "severity":"none"
       },
-      "annotations": {
-        "description": "some description"
+      "annotations":{
+        "message":"This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n"
       },
-      "startsAt": "2018-08-03T09:52:26.739266876+02:00",
-      "endsAt": "0001-01-01T00:00:00Z"
+      "startsAt":"2020-06-23T03:45:45.022073385Z",
+      "endsAt":"0001-01-01T00:00:00Z",
+      "generatorURL":"http://prometheus-k8s-1:9090/graph?g0.expr=vector%281%29\u0026g0.tab=1",
+      "fingerprint":"18c9684ae47eaa03"
+    },
+    {
+      "status":"firing",
+      "labels":{
+        "alertname":"Watchdog",
+        "cluster":"seed",
+        "prometheus":"monitoring/k8s",
+        "provider":"eks",
+        "region":"us-west-2",
+        "severity":"none"
+      },
+      "annotations":{
+        "message":"This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n"
+      },
+      "startsAt":"2020-07-08T17:55:15.022073385Z",
+      "endsAt":"0001-01-01T00:00:00Z",
+      "generatorURL":"http://prometheus-k8s-1:9090/graph?g0.expr=vector%281%29\u0026g0.tab=1",
+      "fingerprint":"7f0afb5ad8e81f7f"
+    },
+    {
+      "status":"firing",
+      "labels":{
+        "alertname":"Watchdog",
+        "cluster":"seed",
+        "prometheus":"monitoring/k8s",
+        "provider":"gke",
+        "region":"us-west1",
+        "severity":"none"
+      },
+      "annotations":{
+        "message":"This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n"
+      },
+      "startsAt":"2020-07-01T02:37:15.022073385Z",
+      "endsAt":"0001-01-01T00:00:00Z",
+      "generatorURL":"http://prometheus-k8s-0:9090/graph?g0.expr=vector%281%29\u0026g0.tab=1",
+      "fingerprint":"9ca228ced419e823"
+    },
+    {
+      "status":"firing",
+      "labels":{
+        "alertname":"Watchdog",
+        "cluster":"seed",
+        "prometheus":"monitoring/k8s",
+        "provider":"gke",
+        "region":"us-west2",
+        "severity":"none"
+      },
+      "annotations":{
+        "message":"This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n"
+      },
+      "startsAt":"2020-06-23T03:58:15.022073385Z",
+      "endsAt":"0001-01-01T00:00:00Z",
+      "generatorURL":"http://prometheus-k8s-0:9090/graph?g0.expr=vector%281%29\u0026g0.tab=1",
+      "fingerprint":"047137463e459990"
     }
   ],
-  "groupLabels": {
-    "alertname": "WatchDog"
+  "groupLabels":{
+    "alertname":"Watchdog",
+    "severity":"none"
   },
-  "commonLabels": {
-    "alertname": "WatchDog",
-    "dc": "eu-west-1"
+  "commonLabels":{
+    "alertname":"Watchdog",
+    "prometheus":"monitoring/k8s",
+    "severity":"none"
   },
-  "commonAnnotations": {
-    "description": "some description"
+  "commonAnnotations":{
+    "message":"This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n"
   },
-  "externalURL": "http://alertmanager:9093"
+  "externalURL":"http://alertmanager.ing.dev.shared.aws.tidbcloud.com"
 }
