@@ -1,0 +1,29 @@
+{
+  "receiver": "webhook",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "WatchDog",
+        "dc": "eu-west-1"
+      },
+      "annotations": {
+        "description": "some description"
+      },
+      "startsAt": "2018-08-03T09:52:26.739266876+02:00",
+      "endsAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "groupLabels": {
+    "alertname": "WatchDog"
+  },
+  "commonLabels": {
+    "alertname": "WatchDog",
+    "dc": "eu-west-1"
+  },
+  "commonAnnotations": {
+    "description": "some description"
+  },
+  "externalURL": "http://alertmanager:9093"
+}
