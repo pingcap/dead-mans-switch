@@ -37,10 +37,10 @@ type DeadmansSwitch struct {
 	interval time.Duration
 	ticker   *time.Ticker
 	closer   chan struct{}
-	notifier func(msg string) error
+	notifier func(summary, detail string) error
 }
 
-func NewDeadMansSwitch(message <-chan string, interval time.Duration, notifier func(msg string) error) *DeadmansSwitch {
+func NewDeadMansSwitch(message <-chan string, interval time.Duration, notifier func(summary, detail string) error) *DeadmansSwitch {
 	return &DeadmansSwitch{
 		message:  message,
 		interval: interval,
@@ -59,7 +59,7 @@ func (d *DeadmansSwitch) Run() error {
 		select {
 		case <-d.ticker.C:
 			if !skip {
-				d.Notify("DeadMansSwitchDown")
+				d.Notify("WatchdogDown", "alerting pipeline is unhealthy")
 			} else {
 				log.Println("received Deadman's Switch alert, skip notify")
 			}
@@ -69,7 +69,7 @@ func (d *DeadmansSwitch) Run() error {
 		case msg := <-d.message:
 			if msg != "" {
 				// message is not null, heatbeat failed, directly notify
-				d.Notify(msg)
+				d.Notify("WatchdogAlertPayloadNotAsExpected", msg)
 			} else {
 				// message is null, heatbeat success, just skip current check
 				heatbeatSuccess.Inc()
@@ -80,12 +80,11 @@ func (d *DeadmansSwitch) Run() error {
 			break
 		}
 	}
-
 }
 
 // Notify send special message to notifier
-func (d *DeadmansSwitch) Notify(msg string) {
-	if err := d.notifier(msg); err != nil {
+func (d *DeadmansSwitch) Notify(summary, detail string) {
+	if err := d.notifier(summary, detail); err != nil {
 		failedNotifications.Inc()
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 	}
