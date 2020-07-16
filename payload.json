@@ -87,5 +87,5 @@
   "commonAnnotations":{
     "message":"This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n"
   },
-  "externalURL":"http://alertmanager.ing.dev.shared.aws.tidbcloud.com"
+  "externalURL":"http://alertmanager:9093"
 }
