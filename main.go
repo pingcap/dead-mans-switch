@@ -84,18 +84,21 @@ func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc
 				if diff != "" {
 					evaluateMessage <- diff
 					fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not euqal", diff)
+					w.WriteHeader(http.StatusOK)
+					return
 				}
 			case EvaluateInclude, "":
 				if diff != "" {
 					if strings.Contains(diff, "- ") {
 						evaluateMessage <- diff
 						fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not included", diff)
+						w.WriteHeader(http.StatusOK)
+						return
 					}
 				}
 			}
-		} else {
-			evaluateMessage <- ""
 		}
+		evaluateMessage <- ""
 
 		w.WriteHeader(http.StatusOK)
 	}
