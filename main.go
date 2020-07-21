@@ -63,8 +63,8 @@ func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		jsonData, _ := json.Marshal(data)
-		log.Printf("received webhook payload: %v\n", string(jsonData))
+
+		log.Println("received webhook payload")
 
 		// if evaluateMessage is "", the heartbeat is successful,
 		// if it is not empty, use evaluateMessage as notify message
@@ -89,6 +89,7 @@ func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc
 				}
 			case EvaluateInclude, "":
 				if diff != "" {
+					// todo: cmp package does not support get only the more or less part.
 					if strings.Contains(diff, "- ") {
 						evaluateMessage <- diff
 						fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not included", diff)
