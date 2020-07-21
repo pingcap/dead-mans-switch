@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -78,9 +77,10 @@ func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc
 				copyData.Alerts[index].Status = v.Status
 				copyData.Alerts[index].Labels = v.Labels
 			}
-			diff := cmp.Diff(evaluate.Data, copyData)
+
 			switch evaluate.Type {
 			case EvaluateEqual:
+				diff := cmp.Diff(evaluate.Data, copyData)
 				if diff != "" {
 					evaluateMessage <- diff
 					fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not euqal", diff)
@@ -88,14 +88,12 @@ func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc
 					return
 				}
 			case EvaluateInclude, "":
+				diff := Include(evaluate.Data, copyData)
 				if diff != "" {
-					// todo: cmp package does not support get only the more or less part.
-					if strings.Contains(diff, "- ") {
-						evaluateMessage <- diff
-						fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not included", diff)
-						w.WriteHeader(http.StatusOK)
-						return
-					}
+					evaluateMessage <- diff
+					fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not included", diff)
+					w.WriteHeader(http.StatusOK)
+					return
 				}
 			}
 		}
