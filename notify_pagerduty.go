@@ -26,6 +26,9 @@ func (p *PagerDuty) Notify(summary, detail string) error {
 		Severity:  "critical",
 		Timestamp: time.Now().Format(time.RFC3339),
 		Details:   detail,
+		Group:     "DeadMansSwitch",
+		// used for group alerting event
+		Class:     summary,
 	}
 
 	event := pagerduty.V2Event{
