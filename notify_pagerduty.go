@@ -18,13 +18,17 @@ func NewPagerDutyNotify(authKey string) *PagerDuty {
 }
 
 // Notify send notify message to pagerduty
-func (p *PagerDuty) Notify(msg string) error {
-	log.Printf("sending notify: %s to pagerduty\n", msg)
+func (p *PagerDuty) Notify(summary, detail string) error {
+	log.Printf("sending notify: %s to pagerduty\n", summary)
 	pdPayload := pagerduty.V2Payload{
-		Summary:   msg,
+		Summary:   summary,
 		Source:    "DeadMansSwitch",
 		Severity:  "critical",
 		Timestamp: time.Now().Format(time.RFC3339),
+		Details:   detail,
+		Group:     "DeadMansSwitch",
+		// used for group alerting event
+		Class:     summary,
 	}
 
 	event := pagerduty.V2Event{

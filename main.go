@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/prometheus/alertmanager/template"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -27,7 +28,7 @@ func main() {
 	}
 	evaluateMessage := make(chan string)
 	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/webhook", webhook(evaluateMessage))
+	http.Handle("/webhook", webhook(evaluateMessage, config.Evaluate))
 	http.HandleFunc("/health", health)
 	s := &http.Server{
 		Addr: ":8080",
@@ -53,19 +54,49 @@ func main() {
 }
 
 // webhook access alert manager alert message and evaluate alert as expected
-func webhook(evaluateMessage chan<- string) http.HandlerFunc {
+func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		data := template.Data{}
-		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		data := new(template.Data)
+		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		log.Printf("received webhook payload: %+v\n", data)
 
-		// TODO: evaluate alert as expected
+		log.Println("received webhook payload")
+
 		// if evaluateMessage is "", the heartbeat is successful,
 		// if it is not empty, use evaluateMessage as notify message
+		if evaluate != nil {
+			// only compare .Receiver .Status .Alerts as expected
+			copyData := template.Data{}
+			copyData.Receiver = data.Receiver
+			copyData.Status = data.Status
+			copyData.Alerts = make(template.Alerts, len(data.Alerts))
+			for index, v := range data.Alerts {
+				copyData.Alerts[index].Status = v.Status
+				copyData.Alerts[index].Labels = v.Labels
+			}
+
+			switch evaluate.Type {
+			case EvaluateEqual:
+				diff := cmp.Diff(evaluate.Data, copyData)
+				if diff != "" {
+					evaluateMessage <- diff
+					fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not euqal", diff)
+					w.WriteHeader(http.StatusOK)
+					return
+				}
+			case EvaluateInclude, "":
+				diff := Include(evaluate.Data, copyData)
+				if diff != "" {
+					evaluateMessage <- diff
+					fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not included", diff)
+					w.WriteHeader(http.StatusOK)
+					return
+				}
+			}
+		}
 		evaluateMessage <- ""
 
 		w.WriteHeader(http.StatusOK)

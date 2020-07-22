@@ -10,8 +10,8 @@ func TestDeadMansSwitchDoesntTrigger(t *testing.T) {
 	defer close(evaluateMessage)
 
 	notify := ""
-	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(msg string) error {
-		notify = msg
+	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(summary, detail string) error {
+		notify = summary
 		return nil
 	})
 
@@ -31,8 +31,9 @@ func TestDeadMansSwitchTrigger(t *testing.T) {
 	defer close(evaluateMessage)
 
 	notify := ""
-	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(msg string) error {
-		notify = msg
+	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(summary, detail string) error {
+		notify = summary
+
 		return nil
 	})
 
@@ -40,7 +41,7 @@ func TestDeadMansSwitchTrigger(t *testing.T) {
 	defer d.Stop()
 
 	time.Sleep(150 * time.Millisecond)
-	if notify != "DeadMansSwitchDown" {
+	if notify != "WatchdogDown" {
 		t.Fatal("deadman should trigger!")
 	}
 }
@@ -50,8 +51,10 @@ func TestEvaluateMessageNotNull(t *testing.T) {
 	defer close(evaluateMessage)
 
 	notify := ""
-	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(msg string) error {
-		notify = msg
+	notifyDetail := ""
+	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(summary, detail string) error {
+		notify = summary
+		notifyDetail = detail
 		return nil
 	})
 
@@ -60,7 +63,11 @@ func TestEvaluateMessageNotNull(t *testing.T) {
 
 	evaluateMessage <- "alert not as expected"
 
-	if notify != "alert not as expected" {
-		t.Fatal("notify msg should equal with evaluate message!")
+	if notify != "WatchdogAlertPayloadNotAsExpected" {
+		t.Fatal("summary should equal with WatchdogAlertPayloadNotAsExpected")
+	}
+
+	if notifyDetail != "alert not as expected" {
+		t.Fatal("notify detail should be equal with evaluate message")
 	}
 }

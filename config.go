@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"gopkg.in/yaml.v2"
+	"github.com/prometheus/alertmanager/template"
 )
 
 type Config struct {
@@ -21,8 +22,16 @@ type Pagerduty struct {
 	Key string
 }
 
+type EvaluateType string
+
+const(
+	EvaluateEqual EvaluateType = "equal"
+	EvaluateInclude EvaluateType = "include"
+)
+
 type Evaluate struct {
-	// TODO: add evaluate rules
+	Data template.Data
+	Type EvaluateType
 }
 
 func ParseConfig(path string) (*Config, error) {

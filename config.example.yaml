@@ -3,3 +3,42 @@ notify:
   pagerduty:
     # REF: https://support.pagerduty.com/docs/generating-api-keys
     key: <pagerduty_integrate_key>
+evaluate:
+  # evaluate alert payload include .evaluate.data
+  type: include
+  data:
+    receiver: dead-mans-switch
+    status: firing
+    alerts:
+      - status: firing
+        labels:
+          alertname: Watchdog
+          cluster: base
+          prometheus: monitoring/k8s
+          provider: eks
+          region: us-west-2
+          severity: none
+      - status: firing
+        labels:
+          alertname: Watchdog
+          cluster: seed
+          prometheus: monitoring/k8s
+          provider: eks
+          region: us-west-2
+          severity: none
+      - status: firing
+        labels:
+          alertname: Watchdog
+          cluster: seed
+          prometheus: monitoring/k8s
+          provider: gke
+          region: us-west1
+          severity: none
+      - status: firing
+        labels:
+          alertname: Watchdog
+          cluster: seed
+          prometheus: monitoring/k8s
+          provider: gke
+          region: us-west2
+          severity: none
