@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+    prometheus: k8s
+    role: alert-rules
+  name: dead-mans-switch
+  namespace: monitoring
+spec:
+  groups:
+  - name: dead-mans-switch
+    rules:
+    - alert: DeadMansSwitchDown
+      annotations:
+        message: DeadMansSwitch has disappeared from Prometheus target discovery.
+      expr: absent(up{job="dead-mans-switch"} == 1)
+      for: 10m
+      labels:
+        severity: critical
+    - alert: DeadMansSwitchNotifyFailed
+      annotations:
+        message: DeadMansSwitch failed send notifications.
+      expr: increase(dead_mans_switch_notifications_failed{}[5m]) > 0
+      labels:
+        severity: warnning
+    - alert: DeadMansSwitchNotifyFailed
+      annotations:
+        message: DeadMansSwitch failed send notifications.
+      expr: increase(dead_mans_switch_notifications_failed{}[5m]) > 0
+      for: 25m
+      labels:
+        severity: critical

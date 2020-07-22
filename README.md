@@ -28,10 +28,15 @@ make build
 
 running in local environment
 ```sh
-dms -config config.example.yaml
+dms -config ./manifest/config.example.yaml
 ```
 
 send alert manager webhook payload
 ```sh
 curl -H "Content-Type: application/json" --data @payload.json http://localhost:8080/webhook
 ```
+
+## Deploy
+
+The `manifest/deploy` directory have k8s deploy yaml files, you can copy it and update <pagerduty> in configmap.
+The `manifest/monitoring` directory have `ServiceMonitor` and `PrometheusRule` crd file, if you use prometheus-operator monitor your k8s clusters, you can trying for it.
