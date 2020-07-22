@@ -40,3 +40,24 @@ curl -H "Content-Type: application/json" --data @payload.json http://localhost:8
 
 The `manifest/deploy` directory have k8s deploy yaml files, you can copy it and update <pagerduty> in configmap.
 The `manifest/monitoring` directory have `ServiceMonitor` and `PrometheusRule` crd file, if you use prometheus-operator monitor your k8s clusters, you can trying for it.
+
+### AlertManager config
+let WatchDog alert send to dead mans switch receivers
+```yaml
+route:
+  routes:
+    - receiver: dead-mans-switch
+      group_wait: 10s
+      group_interval: 30s
+      repeat_interval: 15s
+      match:
+        alertname: 'Watchdog'
+```
+
+add dead mans switch service as a new webhook receiver
+```yaml
+receivers:
+- name: dead-mans-switch
+  webhook_configs:
+  - url: http://dead-mans-switch:8080/webhook
+```
