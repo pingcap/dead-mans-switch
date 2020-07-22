@@ -5,61 +5,8 @@ data:
     interval: 5m
     notify:
       pagerduty:
-        key: seed
-    evaluate:
-      # evaluate alert payload include .evaluate.data
-      type: include
-      data:
-        receiver: dead-mans-switch
-        status: firing
-        alerts:
-          - status: firing
-            labels:
-              alertname: Watchdog
-              cluster: base
-              prometheus: monitoring/k8s
-              provider: eks
-              region: us-west-2
-              severity: none
-          - status: firing
-            labels:
-              alertname: Watchdog
-              cluster: seed
-              prometheus: monitoring/k8s
-              provider: eks
-              region: us-west-2
-              severity: none
-          - status: firing
-            labels:
-              alertname: Watchdog
-              cluster: seed
-              prometheus: monitoring/k8s
-              provider: eks
-              region: us-west-1
-              severity: none
-          - status: firing
-            labels:
-              alertname: Watchdog
-              cluster: seed
-              prometheus: monitoring/k8s
-              provider: eks
-              region: ap-southeast-1
-              severity: none
-          - status: firing
-            labels:
-              alertname: Watchdog
-              cluster: seed
-              prometheus: monitoring/k8s
-              provider: gke
-              region: us-west1
-              severity: none
+        key: <YOUR_PAGERDUTY_KEY>
 kind: ConfigMap
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"config.yaml":"\ninterval: 5m\nnotify:\n  pagerduty:\n    key: seed\nevaluate:\n  # evaluate alert payload include .evaluate.data\n  type: include\n  data:\n    receiver: dead-mans-switch\n    status: firing\n    alerts:\n      - status: firing\n        labels:\n          alertname: Watchdog\n          cluster: base\n          prometheus: monitoring/k8s\n          provider: eks\n          region: us-west-2\n          severity: none\n      - status: firing\n        labels:\n          alertname: Watchdog\n          cluster: seed\n          prometheus: monitoring/k8s\n          provider: eks\n          region: us-west-2\n          severity: none\n      - status: firing\n        labels:\n          alertname: Watchdog\n          cluster: seed\n          prometheus: monitoring/k8s\n          provider: eks\n          region: us-west-1\n          severity: none\n      - status: firing\n        labels:\n          alertname: Watchdog\n          cluster: seed\n          prometheus: monitoring/k8s\n          provider: eks\n          region: ap-southeast-1\n          severity: none\n      - status: firing\n        labels:\n          alertname: Watchdog\n          cluster: seed\n          prometheus: monitoring/k8s\n          provider: gke\n          region: us-west1\n          severity: none"},"kind":"ConfigMap","metadata":{"annotations":{"pulumi.com/autonamed":"true"},"labels":{"app.kubernetes.io/managed-by":"pulumi"},"name":"dead-mans-switch-config-t13uziow","namespace":"monitoring"}}
-    pulumi.com/autonamed: "true"
-  labels:
-    app.kubernetes.io/managed-by: pulumi
   name: dead-mans-switch-config-t13uziow
   namespace: monitoring
