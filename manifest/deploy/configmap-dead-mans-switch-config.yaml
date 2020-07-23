@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  config.yaml: |2-
+
+    interval: 5m
+    notify:
+      pagerduty:
+        key: <YOUR_PAGERDUTY_KEY>
+kind: ConfigMap
+metadata:
+  name: dead-mans-switch-config-t13uziow
+  namespace: monitoring

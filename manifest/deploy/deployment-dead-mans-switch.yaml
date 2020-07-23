@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dead-mans-switch
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dead-mans-switch
+  template:
+    metadata:
+      labels:
+        app: dead-mans-switch
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - alertmanager
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+            weight: 100
+      containers:
+      - args:
+        - -config=/etc/deadmansswitch/config.yaml
+        image: gcr.io/pingcap-public/deadmansswitch:latest
+        imagePullPolicy: Always
+        name: dead-mans-switch
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        volumeMounts:
+        - mountPath: /etc/deadmansswitch
+          name: config
+      volumes:
+      - configMap:
+          name: dead-mans-switch-config
+        name: config
