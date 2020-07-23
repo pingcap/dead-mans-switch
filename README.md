@@ -1,10 +1,10 @@
 # dead-mans-switch
-dead mans switch is a simple prometheus alert manager webhook service. it provides a basic mechanisms to ensure entire alerting pipeline is headthy.
+dead mans switch is a simple prometheus alert manager webhook service. it provides a basic mechanisms to ensure alerting pipeline is healthy.
 
 
-prometheus provider a mechanisms to always firing. this is call `WatchDog` in prometheus-operator. If `WatchDog` does not firing, we can think alerting pipeline is unheadthy.
-dead mans switch can used for access `WatchDog` webhook payload. evaluate alerting payload as expected optional. sometimes your have a aggregated alert manager services, will have multiply prometheus
-instance send `WatchDog` alert to alert manager. we can use evaluater to ensure all prometheus is healthy and external label as expected.
+prometheus provider a mechanisms to always firing. this is call `WatchDog` in prometheus-operator. If `WatchDog` does not firing, we can think alerting pipeline is unhealthy.
+dead mans switch can used for receive `WatchDog` webhook payload. evaluate alerting payload as expected optional. (sometimes your have a aggregated alert manager services, will have multiply prometheus
+instance send `WatchDog` alert to alert manager). we can use evaluator to ensure all prometheus is healthy and external label as expected.
 
 ```yaml
 - alert: Watchdog
