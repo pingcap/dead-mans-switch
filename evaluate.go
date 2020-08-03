@@ -16,7 +16,7 @@ func Include(i, j template.Data) (diff string) {
 		return fmt.Sprintf("receiver different, expected: %v, got: %v", i.Status, j.Status)
 	}
 
-	for index, k := range i.Alerts {
+	for _, k := range i.Alerts {
 		include := false
 		for _, l := range j.Alerts {
 			if reflect.DeepEqual(k, l) {
@@ -27,7 +27,7 @@ func Include(i, j template.Data) (diff string) {
 		if include {
 			continue
 		} else {
-			return fmt.Sprintf(".Alerts[%v] not included, got: %v", index, j.Alerts)
+			return fmt.Sprintf("expected included: %+v\ngot: %+v", k, j.Alerts)
 		}
 	}
 	return ""

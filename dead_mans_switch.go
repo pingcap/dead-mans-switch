@@ -23,12 +23,20 @@ var (
 			Help: "The number of failed notifications.",
 		},
 	)
+
+	failedEvaluatePayload = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "dead_mans_switch_evaluate_failed",
+			Help: "The timestamps of failed evaluate.",
+		},
+	)
 )
 
 func init() {
 	prometheus.MustRegister(
 		heatbeatSuccess,
 		failedNotifications,
+		failedEvaluatePayload,
 	)
 }
 
@@ -68,10 +76,10 @@ func (d *DeadmansSwitch) Run() error {
 
 		case msg := <-d.message:
 			if msg != "" {
-				// message is not null, heatbeat failed, directly notify
-				d.Notify("WatchdogAlertPayloadNotAsExpected", msg)
+				failedEvaluatePayload.SetToCurrentTime()
 			} else {
 				// message is null, heatbeat success, just skip current check
+				failedEvaluatePayload.Set(0)
 				heatbeatSuccess.Inc()
 				skip = true
 			}
