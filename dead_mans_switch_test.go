@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus/testutil"
 )
 
 func TestDeadMansSwitchDoesntTrigger(t *testing.T) {
@@ -50,11 +52,7 @@ func TestEvaluateMessageNotNull(t *testing.T) {
 	evaluateMessage := make(chan string)
 	defer close(evaluateMessage)
 
-	notify := ""
-	notifyDetail := ""
 	d := NewDeadMansSwitch(evaluateMessage, 100*time.Millisecond, func(summary, detail string) error {
-		notify = summary
-		notifyDetail = detail
 		return nil
 	})
 
@@ -63,11 +61,7 @@ func TestEvaluateMessageNotNull(t *testing.T) {
 
 	evaluateMessage <- "alert not as expected"
 
-	if notify != "WatchdogAlertPayloadNotAsExpected" {
-		t.Fatal("summary should equal with WatchdogAlertPayloadNotAsExpected")
-	}
-
-	if notifyDetail != "alert not as expected" {
-		t.Fatal("notify detail should be equal with evaluate message")
+	if testutil.ToFloat64(failedEvaluatePayload) == 0 {
+		t.Fatal("failedEvaluatePayload should be > 0 when evaluate failed")
 	}
 }
