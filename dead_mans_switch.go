@@ -24,10 +24,10 @@ var (
 		},
 	)
 
-	failedEvaluatePayload = prometheus.NewGaugeVec(
+	lastAlertTimestamp = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "dead_mans_switch_evaluate_failed",
-			Help: "The timestamps of failed evaluate.",
+			Name: "dead_mans_switch_last_alert_timestamp",
+			Help: "The last timestamps of alert.",
 		}, []string{"labels"},
 	)
 )
@@ -36,7 +36,7 @@ func init() {
 	prometheus.MustRegister(
 		heatbeatSuccess,
 		failedNotifications,
-		failedEvaluatePayload,
+		lastAlertTimestamp,
 	)
 }
 

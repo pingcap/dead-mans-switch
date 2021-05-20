@@ -37,6 +37,7 @@ func main() {
 		log.Fatal(s.ListenAndServe())
 	}()
 
+	InitPrometheusValues(config.Evaluate)
 	pagerDuty := NewPagerDutyNotify(config.Notify.Pagerduty.Key)
 	dms := NewDeadMansSwitch(evaluateMessage, config.Interval, pagerDuty.Notify)
 	go dms.Run()

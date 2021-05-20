@@ -6,6 +6,13 @@ import (
 	"github.com/prometheus/alertmanager/template"
 )
 
+func InitPrometheusValues(evaluate *Evaluate) {
+	for _, j := range evaluate.Data.Alerts {
+		labelValuesStr := strings.Join(j.Labels.Values(), " ")
+		lastAlertTimestamp.WithLabelValues(labelValuesStr).Set(0)
+	}
+}
+
 func Include(i, j template.Data) {
 	exportedReceiveAlerts := make(map[string]bool)
 	for _, k := range i.Alerts {
@@ -18,10 +25,8 @@ func Include(i, j template.Data) {
 		exportedReceiveAlerts[labelValuesStr] = true
 	}
 	for label, received := range exportedReceiveAlerts {
-		v := 1.0
 		if received {
-			v = 0
+			lastAlertTimestamp.WithLabelValues(label).SetToCurrentTime()
 		}
-		failedEvaluatePayload.WithLabelValues(label).Set(v)
 	}
 }
