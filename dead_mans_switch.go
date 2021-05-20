@@ -24,11 +24,11 @@ var (
 		},
 	)
 
-	failedEvaluatePayload = prometheus.NewGauge(
+	failedEvaluatePayload = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "dead_mans_switch_evaluate_failed",
 			Help: "The timestamps of failed evaluate.",
-		},
+		}, []string{"labels"},
 	)
 )
 
@@ -74,15 +74,9 @@ func (d *DeadmansSwitch) Run() error {
 
 			skip = false
 
-		case msg := <-d.message:
-			if msg != "" {
-				failedEvaluatePayload.SetToCurrentTime()
-			} else {
-				// message is null, heatbeat success, just skip current check
-				failedEvaluatePayload.Set(0)
-				heatbeatSuccess.Inc()
-				skip = true
-			}
+		case <-d.message:
+			heatbeatSuccess.Inc()
+			skip = true
 
 		case <-d.closer:
 			break

@@ -88,13 +88,7 @@ func webhook(evaluateMessage chan<- string, evaluate *Evaluate) http.HandlerFunc
 					return
 				}
 			case EvaluateInclude, "":
-				diff := Include(evaluate.Data, copyData)
-				if diff != "" {
-					evaluateMessage <- diff
-					fmt.Fprintf(os.Stderr, "error: %s, diff: %s\n", "alert payload not included", diff)
-					w.WriteHeader(http.StatusOK)
-					return
-				}
+				Include(evaluate.Data, copyData)
 			}
 		}
 		evaluateMessage <- ""
