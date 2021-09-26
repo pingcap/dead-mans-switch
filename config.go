@@ -9,17 +9,22 @@ import (
 )
 
 type Config struct {
-	Interval time.Duration
-	Notify   *Notify
-	Evaluate *Evaluate
+	Interval time.Duration `yaml:"interval"`
+	Notify   *Notify       `yaml:"notify"`
+	Evaluate *Evaluate     `yaml:"evaluate"`
 }
 
 type Notify struct {
-	Pagerduty *Pagerduty
+	Pagerduty *PagerdutyConfig `yaml:"pagerduty"`
+	Slack     *SlackConfig     `yaml:"slack"`
 }
 
-type Pagerduty struct {
-	Key string
+type PagerdutyConfig struct {
+	Key string `yaml:"key"`
+}
+
+type SlackConfig struct {
+	WebhookURL string `yaml:"webhookurl"`
 }
 
 type EvaluateType string
