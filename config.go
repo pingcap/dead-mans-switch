@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/yaml.v2"
 	"github.com/prometheus/alertmanager/template"
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -24,8 +24,8 @@ type Pagerduty struct {
 
 type EvaluateType string
 
-const(
-	EvaluateEqual EvaluateType = "equal"
+const (
+	EvaluateEqual   EvaluateType = "equal"
 	EvaluateInclude EvaluateType = "include"
 )
 
@@ -35,12 +35,14 @@ type Evaluate struct {
 }
 
 func ParseConfig(path string) (*Config, error) {
-	file, err := os.Open(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
+	// Expand environment variables if possible
+	content = []byte(os.ExpandEnv(string(content)))
 	config := &Config{}
-	err = yaml.NewDecoder(file).Decode(config)
+	err = yaml.Unmarshal(content, config)
 	if err != nil {
 		return nil, err
 	}
