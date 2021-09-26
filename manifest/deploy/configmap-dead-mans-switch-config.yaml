@@ -1,4 +1,8 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dead-mans-switch-config-t13uziow
+  namespace: monitoring
 data:
   config.yaml: |2-
 
@@ -6,7 +10,5 @@ data:
     notify:
       pagerduty:
         key: <YOUR_PAGERDUTY_KEY>
-kind: ConfigMap
-metadata:
-  name: dead-mans-switch-config-t13uziow
-  namespace: monitoring
+      slack:
+        webhookurl: <YOUR_SLACK_WEBHOOK_URL>
