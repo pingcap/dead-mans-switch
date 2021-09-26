@@ -52,7 +52,7 @@ const slackTmpl = `
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "%s"
+				"text": "DeadMansSwitch - %s"
 			}
 		},
 		{
