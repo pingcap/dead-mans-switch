@@ -41,19 +41,19 @@ func init() {
 }
 
 type DeadmansSwitch struct {
-	message  <-chan string
-	interval time.Duration
-	ticker   *time.Ticker
-	closer   chan struct{}
-	notifier func(summary, detail string) error
+	message   <-chan string
+	interval  time.Duration
+	ticker    *time.Ticker
+	closer    chan struct{}
+	notifiers []NotifyInterface
 }
 
-func NewDeadMansSwitch(message <-chan string, interval time.Duration, notifier func(summary, detail string) error) *DeadmansSwitch {
+func NewDeadMansSwitch(message <-chan string, interval time.Duration, notifiers []NotifyInterface) *DeadmansSwitch {
 	return &DeadmansSwitch{
-		message:  message,
-		interval: interval,
-		notifier: notifier,
-		closer:   make(chan struct{}),
+		message:   message,
+		interval:  interval,
+		notifiers: notifiers,
+		closer:    make(chan struct{}),
 	}
 }
 
@@ -62,7 +62,7 @@ func (d *DeadmansSwitch) Run() error {
 	d.ticker = time.NewTicker(d.interval)
 
 	skip := false
-
+outer:
 	for {
 		select {
 		case <-d.ticker.C:
@@ -85,16 +85,19 @@ func (d *DeadmansSwitch) Run() error {
 			}
 
 		case <-d.closer:
-			break
+			break outer
 		}
 	}
+	return nil
 }
 
 // Notify send special message to notifier
 func (d *DeadmansSwitch) Notify(summary, detail string) {
-	if err := d.notifier(summary, detail); err != nil {
-		failedNotifications.Inc()
-		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+	for _, notifier := range d.notifiers {
+		if err := notifier.Notify(summary, detail); err != nil {
+			failedNotifications.Inc()
+			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		}
 	}
 }
 
