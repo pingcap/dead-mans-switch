@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -19,6 +20,7 @@ func NewSlackNotify(webhookURL string) *Slack {
 
 // Notify send notify message to Slack
 func (s *Slack) Notify(summary, detail string) error {
+	log.Printf("sending notify: %s to slack\n", summary)
 
 	rendered := fmt.Sprintf(slackTmpl, summary, detail, time.Now().Format(time.RFC3339))
 
