@@ -37,8 +37,16 @@ func main() {
 		log.Fatal(s.ListenAndServe())
 	}()
 
-	pagerDuty := NewPagerDutyNotify(config.Notify.Pagerduty.Key)
-	dms := NewDeadMansSwitch(evaluateMessage, config.Interval, pagerDuty.Notify)
+	var notifiers []NotifyInterface
+	if config.Notify.Pagerduty != nil {
+		pagerDuty := NewPagerDutyNotify(config.Notify.Pagerduty.Key)
+		notifiers = append(notifiers, pagerDuty)
+	}
+	if config.Notify.Slack != nil {
+		slack := NewSlackNotify(config.Notify.Slack.WebhookURL)
+		notifiers = append(notifiers, slack)
+	}
+	dms := NewDeadMansSwitch(evaluateMessage, config.Interval, notifiers)
 	go dms.Run()
 
 	stop := make(chan os.Signal, 1)

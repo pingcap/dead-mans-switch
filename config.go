@@ -4,28 +4,33 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/yaml.v2"
 	"github.com/prometheus/alertmanager/template"
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Interval time.Duration
-	Notify   *Notify
-	Evaluate *Evaluate
+	Interval time.Duration `yaml:"interval"`
+	Notify   *Notify       `yaml:"notify"`
+	Evaluate *Evaluate     `yaml:"evaluate"`
 }
 
 type Notify struct {
-	Pagerduty *Pagerduty
+	Pagerduty *PagerdutyConfig `yaml:"pagerduty"`
+	Slack     *SlackConfig     `yaml:"slack"`
 }
 
-type Pagerduty struct {
-	Key string
+type PagerdutyConfig struct {
+	Key string `yaml:"key"`
+}
+
+type SlackConfig struct {
+	WebhookURL string `yaml:"webhookurl"`
 }
 
 type EvaluateType string
 
-const(
-	EvaluateEqual EvaluateType = "equal"
+const (
+	EvaluateEqual   EvaluateType = "equal"
 	EvaluateInclude EvaluateType = "include"
 )
 
@@ -35,12 +40,14 @@ type Evaluate struct {
 }
 
 func ParseConfig(path string) (*Config, error) {
-	file, err := os.Open(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
+	// Expand environment variables if possible
+	content = []byte(os.ExpandEnv(string(content)))
 	config := &Config{}
-	err = yaml.NewDecoder(file).Decode(config)
+	err = yaml.Unmarshal(content, config)
 	if err != nil {
 		return nil, err
 	}
